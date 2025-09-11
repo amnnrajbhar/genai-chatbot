@@ -11,8 +11,21 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
   overflow: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e40af 75%, #1e3a8a 100%);
+}
+
+/* Safe area support for iPhone */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Responsive text sizing */
+@media (max-width: 640px) {
+  .prose {
+    font-size: 14px;
+  }
 }
 
 /* Custom scrollbar */
