@@ -1,0 +1,12 @@
+<div class="flex mb-4 animate-fade-in" [ngClass]="{'justify-end': message.isUser, 'justify-start': !message.isUser}">
+  <div class="max-w-xs lg:max-w-2xl px-5 py-4 rounded-2xl transition-all duration-500 hover:shadow-2xl backdrop-blur-md border"
+       [ngClass]="{
+         'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-xl border-white/20': message.isUser && isDarkMode,
+         'bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-xl border-white/20': message.isUser && !isDarkMode,
+         'bg-navy-glass border-white/20 text-blue-100 shadow-xl': !message.isUser && isDarkMode,
+         'bg-white/60 border-white/70 text-orange-900 shadow-xl': !message.isUser && !isDarkMode
+       }">
+    <div class="prose prose-sm max-w-none" [innerHTML]="formatMessage(message.content)"></div>
+    <span class="text-xs opacity-75 mt-2 block">{{ message.timestamp | date:'short' }}</span>
+  </div>
+</div>

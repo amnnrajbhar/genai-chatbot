@@ -1,0 +1,46 @@
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+.prose {
+  line-height: 1.6;
+}
+
+.prose p {
+  margin-bottom: 0.5rem;
+}
+
+.prose ul {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+}
+
+.prose li {
+  margin-bottom: 0.25rem;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #60a5fa;
+}
+
+/* Glass morphism effects */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Navy glass effect */
+.bg-navy-glass {
+  background: rgba(30, 58, 138, 0.3);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
