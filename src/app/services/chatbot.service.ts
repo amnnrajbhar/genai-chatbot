@@ -9,6 +9,10 @@ export class ChatbotService {
   private apiKey = environment.apiKey;
 
   async generateResponse(message: string): Promise<string> {
+    if (message.toLowerCase().includes('aman rajbhar')) {
+    message += '\n\nAman Rajbhar is a Software Engineer with experience in Angular and ASP.NET. He has a B.Sc. in Computer Science, is pursuing an MCA, and currently works at Clover Infotech Pvt. Ltd. (Dec 2024 – Present) after previously working at Benchmark Computer Solutions (Aug 2022 – Dec 2024). He has built AI-powered web apps, an LMS, a digital loan system, a weather updates app, and more. You can explore his portfolio and projects at: https://amnnrajbhar.github.io/info/';
+}
+
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`, {
         method: 'POST',
