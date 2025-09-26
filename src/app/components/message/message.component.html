@@ -3,10 +3,10 @@
        [ngClass]="{
          'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-xl border-white/20': message.isUser && isDarkMode,
          'bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-xl border-white/20': message.isUser && !isDarkMode,
-         'bg-navy-glass border-white/20 text-blue-100 shadow-xl': !message.isUser && isDarkMode,
-         'bg-white/60 border-white/70 text-orange-900 shadow-xl': !message.isUser && !isDarkMode
+         'bg-navy-glass border-white/20 text-white shadow-xl': !message.isUser && isDarkMode,
+         'bg-white/60 border-white/70 text-black shadow-xl': !message.isUser && !isDarkMode
        }">
-    <div class="prose prose-sm max-w-none text-sm sm:text-base" [innerHTML]="formatMessage(message.content)"></div>
+    <div class="prose prose-sm max-w-none text-sm sm:text-base" [ngClass]="{'text-white': isDarkMode, 'text-black': !isDarkMode}" [innerHTML]="formatMessage(message.content)"></div>
     <span class="text-xs opacity-75 mt-2 block">{{ message.timestamp | date:'short' }}</span>
   </div>
 </div>
