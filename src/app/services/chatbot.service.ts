@@ -15,8 +15,8 @@ export interface AIModel {
   providedIn: 'root'
 })
 export class ChatbotService {
-  private ai = new GoogleGenAI({ apiKey: environment.apiKey });
-  private groq = new Groq({ apiKey: environment.groqApiKey, dangerouslyAllowBrowser: true });
+  private ai: GoogleGenAI;
+  private groq: Groq;
   
   public availableModels: AIModel[] = [
     { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', provider: 'Google', icon: 'G' },
@@ -28,6 +28,22 @@ export class ChatbotService {
   ];
   
   private selectedModel = 'gemini-3-flash-preview';
+
+  constructor() {
+    const googleApiKey = this.getApiKey('GOOGLE_AI_API_KEY') || environment.apiKey;
+    const groqApiKey = this.getApiKey('GROQ_API_KEY') || environment.groqApiKey;
+    
+    this.ai = new GoogleGenAI({ apiKey: googleApiKey });
+    this.groq = new Groq({ apiKey: groqApiKey, dangerouslyAllowBrowser: true });
+  }
+
+  private getApiKey(keyName: string): string {
+    // In production, try to get from window object (set by server)
+    if (typeof window !== 'undefined' && (window as any).env) {
+      return (window as any).env[keyName];
+    }
+    return '';
+  }
 
   setModel(modelId: string) {
     this.selectedModel = modelId;
