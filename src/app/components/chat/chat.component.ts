@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Message } from '../../models/message.model';
-import { ChatbotService } from '../../services/chatbot.service';
+import { ChatbotService, AIModel } from '../../services/chatbot.service';
 import { MessageComponent } from '../message/message.component';
 
 @Component({
@@ -17,11 +17,43 @@ export class ChatComponent implements OnInit {
   currentMessage = '';
   isTyping = false;
   isDarkMode = false;
+  availableModels: AIModel[] = [];
+  selectedModel = '';
+  showModelDropdown = false;
 
   constructor(private chatbotService: ChatbotService) {}
 
   ngOnInit() {
+    this.availableModels = this.chatbotService.availableModels;
+    this.selectedModel = this.chatbotService.getSelectedModel();
     this.addMessage('Hello! I\'m your AI assistant. How can I help you today?', false);
+  }
+
+  selectModel(modelId: string) {
+    this.selectedModel = modelId;
+    this.chatbotService.setModel(modelId);
+    this.showModelDropdown = false;
+  }
+
+  toggleModelDropdown() {
+    this.showModelDropdown = !this.showModelDropdown;
+  }
+
+  onClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.model-selector')) {
+      this.showModelDropdown = false;
+    }
+  }
+
+  getSelectedModelIcon(): string {
+    const model = this.availableModels.find(m => m.id === this.selectedModel);
+    return model?.icon || 'G';
+  }
+
+  getSelectedModelName(): string {
+    const model = this.availableModels.find(m => m.id === this.selectedModel);
+    return model?.name || 'Select Model';
   }
 
   async sendMessage() {
