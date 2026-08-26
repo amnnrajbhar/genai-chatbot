@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 export interface AIModel {
   id: string;
@@ -137,7 +136,7 @@ export class ChatbotService {
 
     if (message.toLowerCase().includes('aman rajbhar')) {
       message += `
-      
+
 Aman Rajbhar is a Software Engineer with experience in Angular and ASP.NET.
 He has a B.Sc. in Computer Science, is pursuing an MCA, and currently works
 at Clover Infotech Pvt. Ltd. (Dec 2024 – Present) after previously working
@@ -152,43 +151,34 @@ https://amnnrajbhar.github.io/info/
     }
 
     try {
-      const response = await fetch(
-        'https://router.huggingface.co/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${environment.hfToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: 'user',
-                content: message
-              }
-            ],
-            model: this.selectedModel
-          })
-        }
-      );
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message,
+          model: this.selectedModel
+        })
+      });
 
       const result: HuggingFaceResponse = await response.json();
 
-      console.log('Hugging Face status:', response.status);
-      console.log('Hugging Face response:', result);
+      console.log('Chat API status:', response.status);
+      console.log('Chat API response:', result);
 
       if (!response.ok) {
-        console.error('Hugging Face API error:', result);
+        console.error('Chat API error:', result);
 
         if (response.status === 401) {
-          return 'Hugging Face API key is invalid or expired.';
+          return 'Hugging Face authentication failed.';
         }
 
         if (response.status === 429) {
           return 'Hugging Face rate limit exceeded. Please try again later.';
         }
 
-        return result.error || 'Hugging Face API request failed.';
+        return result.error || 'AI request failed.';
       }
 
       return (
@@ -197,7 +187,7 @@ https://amnnrajbhar.github.io/info/
       );
 
     } catch (error) {
-      console.error('Hugging Face request failed:', error);
+      console.error('Chat API request failed:', error);
 
       return 'Sorry, I encountered an error. Please try again.';
     }
