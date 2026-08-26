@@ -10,7 +10,7 @@ export default async function handler(
         });
     }
 
-    const token = process.env.HF_TOKEN;
+    const token = process.env['HF_TOKEN'];
 
     if (!token) {
         return res.status(500).json({
