@@ -1,4 +1,6 @@
+declare const HF_TOKEN: string;
+
 export const environment = {
-    production: true,
-    hfToken: '',
+    production: false,
+    hfToken: HF_TOKEN
 };
