@@ -1,9 +1,8 @@
-const CACHE_NAME = 'genai-chatbot-v1';
+const CACHE_NAME = 'genai-chatbot-v2';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
+  '/manifest.json',
+  '/assets/env.js'
 ];
 
 self.addEventListener('install', event => {
@@ -22,6 +21,6 @@ self.addEventListener('fetch', event => {
         }
         return fetch(event.request);
       }
-    )
+      )
   );
 });

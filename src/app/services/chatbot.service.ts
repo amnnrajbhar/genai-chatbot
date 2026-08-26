@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
-import { GoogleGenAI } from '@google/genai';
-import Groq from 'groq-sdk';
 import { environment } from '../../environments/environment';
 
 export interface AIModel {
@@ -11,41 +9,123 @@ export interface AIModel {
   icon: string;
 }
 
+interface HuggingFaceResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+  error?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatbotService {
-  private ai: GoogleGenAI;
-  private groq: Groq;
-  
+
   public availableModels: AIModel[] = [
-    { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', provider: 'Google', icon: 'G' },
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', provider: 'Google', icon: 'G' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', provider: 'Google', icon: 'G' },
-    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', provider: 'Groq', icon: '🦙' },
-    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', provider: 'Groq', icon: '🦙' },
-    { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', provider: 'Groq', icon: 'M' }
-  ];
-  
-  private selectedModel = 'gemini-3-flash-preview';
+    // =========================
+    // QWEN
+    // =========================
+    {
+      id: 'Qwen/Qwen3-32B:nscale',
+      name: 'Qwen 3 32B',
+      provider: 'Hugging Face',
+      icon: '🤗'
+    },
+    {
+      id: 'Qwen/Qwen3-8B:nscale',
+      name: 'Qwen 3 8B',
+      provider: 'Hugging Face',
+      icon: '🤗'
+    },
+    {
+      id: 'Qwen/Qwen2.5-1.5B-Instruct',
+      name: 'Qwen 2.5 1.5B',
+      provider: 'Hugging Face',
+      icon: '🤗'
+    },
 
-  constructor() {
-    const googleApiKey = this.getApiKey('GOOGLE_AI_API_KEY') || environment.apiKey;
-    const groqApiKey = this.getApiKey('GROQ_API_KEY') || environment.groqApiKey;
-    
-    this.ai = new GoogleGenAI({ apiKey: googleApiKey });
-    this.groq = new Groq({ apiKey: groqApiKey, dangerouslyAllowBrowser: true });
-  }
+    // =========================
+    // DEEPSEEK
+    // =========================
+    {
+      id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B:nscale',
+      name: 'DeepSeek R1 Distill 7B',
+      provider: 'Hugging Face',
+      icon: '🐋'
+    },
+    {
+      id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-32B',
+      name: 'DeepSeek R1 Distill 32B',
+      provider: 'Hugging Face',
+      icon: '🐋'
+    },
+    {
+      id: 'deepseek-ai/DeepSeek-V3.1-Terminus',
+      name: 'DeepSeek V3.1 Terminus',
+      provider: 'Hugging Face',
+      icon: '🐋'
+    },
+    {
+      id: 'deepseek-ai/DeepSeek-V4-Flash-0731',
+      name: 'DeepSeek V4 Flash',
+      provider: 'Hugging Face',
+      icon: '🐋'
+    },
 
-  private getApiKey(keyName: string): string {
-    // In production, try to get from window object (set by server)
-    if (typeof window !== 'undefined' && (window as any).env) {
-      return (window as any).env[keyName];
+    // =========================
+    // META LLAMA
+    // =========================
+    {
+      id: 'meta-llama/Llama-3.1-8B-Instruct:nscale',
+      name: 'Llama 3.1 8B',
+      provider: 'Hugging Face',
+      icon: '🦙'
+    },
+
+    // =========================
+    // GOOGLE GEMMA
+    // =========================
+    {
+      id: 'google/gemma-4-26B-A4B-it',
+      name: 'Gemma 4 26B',
+      provider: 'Hugging Face',
+      icon: 'G'
+    },
+
+    // =========================
+    // MICROSOFT
+    // =========================
+    {
+      id: 'microsoft/phi-4',
+      name: 'Microsoft Phi-4',
+      provider: 'Hugging Face',
+      icon: 'M'
+    },
+
+    // =========================
+    // OPENAI OPEN-WEIGHTS
+    // =========================
+    {
+      id: 'openai/gpt-oss-120b',
+      name: 'GPT OSS 120B',
+      provider: 'Hugging Face',
+      icon: 'O'
+    },
+    {
+      id: 'openai/gpt-oss-20b',
+      name: 'GPT OSS 20B',
+      provider: 'Hugging Face',
+      icon: 'O'
     }
-    return '';
-  }
+  ];
 
-  setModel(modelId: string) {
+  private selectedModel = 'Qwen/Qwen3-32B:nscale';
+
+  constructor() { }
+
+  setModel(modelId: string): void {
     this.selectedModel = modelId;
   }
 
@@ -54,30 +134,71 @@ export class ChatbotService {
   }
 
   async generateResponse(message: string): Promise<string> {
+
     if (message.toLowerCase().includes('aman rajbhar')) {
-      message += '\n\nAman Rajbhar is a Software Engineer with experience in Angular and ASP.NET. He has a B.Sc. in Computer Science, is pursuing an MCA, and currently works at Clover Infotech Pvt. Ltd. (Dec 2024 – Present) after previously working at Benchmark Computer Solutions (Aug 2022 – Dec 2024). He has built AI-powered web apps, an LMS, a digital loan system, a weather updates app, and more. You can explore his portfolio and projects at: https://amnnrajbhar.github.io/info/';
+      message += `
+      
+Aman Rajbhar is a Software Engineer with experience in Angular and ASP.NET.
+He has a B.Sc. in Computer Science, is pursuing an MCA, and currently works
+at Clover Infotech Pvt. Ltd. (Dec 2024 – Present) after previously working
+at Benchmark Computer Solutions (Aug 2022 – Dec 2024).
+
+He has built AI-powered web apps, an LMS, a digital loan system, a weather
+updates app, and more.
+
+Portfolio:
+https://amnnrajbhar.github.io/info/
+`;
     }
 
     try {
-      const selectedModelData = this.availableModels.find(m => m.id === this.selectedModel);
-      
-      if (selectedModelData?.provider === 'Groq') {
-        const completion = await this.groq.chat.completions.create({
-          messages: [{ role: 'user', content: message }],
-          model: this.selectedModel,
-        });
-        return completion.choices[0]?.message?.content || 'No response received.';
-      } else {
-        const response = await this.ai.models.generateContent({
-          model: this.selectedModel,
-          contents: message,
-        });
-        return response.text || 'No response received.';
+      const response = await fetch(
+        'https://router.huggingface.co/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${environment.hfToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: 'user',
+                content: message
+              }
+            ],
+            model: this.selectedModel
+          })
+        }
+      );
+
+      const result: HuggingFaceResponse = await response.json();
+
+      console.log('Hugging Face status:', response.status);
+      console.log('Hugging Face response:', result);
+
+      if (!response.ok) {
+        console.error('Hugging Face API error:', result);
+
+        if (response.status === 401) {
+          return 'Hugging Face API key is invalid or expired.';
+        }
+
+        if (response.status === 429) {
+          return 'Hugging Face rate limit exceeded. Please try again later.';
+        }
+
+        return result.error || 'Hugging Face API request failed.';
       }
-    } catch (error: any) {
-      if (error?.error?.code === 429) {
-        return 'API quota exceeded. Please try again later or check your API limits.';
-      }
+
+      return (
+        result.choices?.[0]?.message?.content ||
+        'No response received.'
+      );
+
+    } catch (error) {
+      console.error('Hugging Face request failed:', error);
+
       return 'Sorry, I encountered an error. Please try again.';
     }
   }
