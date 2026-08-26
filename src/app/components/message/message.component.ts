@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Message } from '../../models/message.model';
 
 @Component({
-  selector: 'app-message',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './message.component.html',
-  styleUrls: ['./message.component.css']
+    selector: 'app-message',
+    imports: [CommonModule],
+    templateUrl: './message.component.html',
+    styleUrls: ['./message.component.css']
 })
 export class MessageComponent {
   @Input() message!: Message;
